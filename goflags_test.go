@@ -263,6 +263,37 @@ func TestParseCommaSeparatedStringSlice(t *testing.T) {
 	tearDown(t.Name())
 }
 
+func TestMj(t *testing.T) {
+	flagSet := NewFlagSet()
+
+	groupName := "testGroup"
+	description := "testDescription"
+	flagSet.SetGroup(groupName, description)
+
+	var testBoolSilent bool
+	var testBoolNoColor bool
+	var testBoolVersion bool
+	var testBoolVerbose bool
+	flagSet.BoolVar(&testBoolSilent, "silent", false, "Silent").Group(groupName)
+	flagSet.BoolVar(&testBoolNoColor, "no-color", true, "No Color").Group(groupName)
+	flagSet.BoolVar(&testBoolVersion, "version", false, "Version").Group(groupName)
+	flagSet.BoolVar(&testBoolVerbose, "verbose", false, "Verbose").Group(groupName)
+
+	os.Args = []string{
+		os.Args[0],
+		"-verbose",
+	}
+
+	err := flagSet.Parse()
+	assert.Nil(t, err)
+
+	assert.Equal(t, false, testBoolSilent)
+	assert.Equal(t, true, testBoolNoColor)
+	assert.Equal(t, false, testBoolVersion)
+	assert.Equal(t, true, testBoolVerbose)
+	tearDown(t.Name())
+}
+
 func TestParseFileCommaSeparatedStringSlice(t *testing.T) {
 	flagSet := NewFlagSet()
 
